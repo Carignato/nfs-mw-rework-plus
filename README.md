@@ -30,6 +30,13 @@ To uninstall: `instalar.exe --desinstalar`.
 
 ---
 
+## Próximas atualizações / Coming soon
+
+- **PT-BR:** menu de **dificuldade** no painel do Home (Fácil / Normal / Difícil).
+- **EN:** a **difficulty** menu in the Home panel (Easy / Normal / Hard).
+
+---
+
 ## Informações / Info
 
 - **PT-BR:** controle Xbox funciona direto; PlayStation via [DS4Windows](https://github.com/Ryochan7/DS4Windows). O painel precisa do ReShade 4.9.1; sem ele a vibração funciona igual. Testado no Rework (Windows 11, DualSense). Só jogo offline. O instalador faz backup (`*.bak_vibracao`).
