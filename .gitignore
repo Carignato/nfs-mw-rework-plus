@@ -1,0 +1,6 @@
+dist/
+*.exe
+*.log
+mw_rumble.cfg
+*.bak_vibracao
+__pycache__/
