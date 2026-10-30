@@ -45,6 +45,8 @@ static void juntar(char *dest, size_t cap, const char *a, const char *b) {
     snprintf(dest, cap, "%s%s%s", a, sep ? "\\" : "", b);
 }
 static void dir_do_programa(char *dest, size_t cap) {
+    const char *o = getenv("NFSMW_DIR_PROGRAMA");        /* o instalador unico define isto: cfg/log ficam junto do mw_rumble.exe */
+    if (o && *o) { snprintf(dest, cap, "%s", o); return; }
     GetModuleFileNameA(NULL, dest, (DWORD)cap);
     char *p = strrchr(dest, '\\'); if (p) *p = 0;
 }

@@ -226,7 +226,8 @@ static int instalar(const char *pasta) {
     if (!strcmp(cfg.modo, "dedicado"))
         printf("Obs.: o ReShade deste jogo nao carregava nenhum efeito (EffectSearchPaths vazio). Foi criado um preset so\n"
                "      para o painel; seus presets/efeitos antigos nao foram ligados nem alterados.\n");
-    printf("Abra o mw_rumble.exe, depois o jogo. No jogo, aperte Home: a pagina \"NFS_MW_Opcoes\" aparece.\n");
+    if (getenv("NFSMW_DIR_PROGRAMA")) printf("No jogo, aperte Home: a pagina \"NFS_MW_Opcoes\" aparece.\n");
+    else printf("Abra o mw_rumble.exe, depois o jogo. No jogo, aperte Home: a pagina \"NFS_MW_Opcoes\" aparece.\n");
     if (recarga_desligada)
         printf("Rework detectado: a opcao \"Recarga do nitro\" vem DESLIGADA (estado do mod). Ligue-a no menu para corrigir.\n");
     free(ini_txt); free(shader);

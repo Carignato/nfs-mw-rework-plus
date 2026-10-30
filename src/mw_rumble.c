@@ -46,6 +46,7 @@ static HANDLE g_proc;
 static uint32_t g_pv;
 static FILE *g_log;
 static int g_probe;
+static int g_sair_com_jogo;   /* --sair-com-jogo: encerra quando o speed.exe fechar (usado pelo launcher .asi) */
 static char g_jogo[MAX_PATH], g_preset[MAX_PATH], g_ini_extra[MAX_PATH], g_attr[MAX_PATH];
 
 static void anotar(const char *fmt, ...) {
@@ -246,6 +247,10 @@ static int rodar(void) {
         }
         if (idx < 0) {
             idx = achar_controle();
+            if (idx < 0 && g_sair_com_jogo && !achar_pid("speed.exe")) {
+                if (pendente) aplicar_ajustes(&op);
+                anotar("jogo fechado, saindo"); return 0;
+            }
             if (idx < 0) { if (t - t_status > 5) { printf("aguardando controle...\n"); t_status = t; } Sleep(1000); continue; }
             g_idx = idx; anotar("controle encontrado no slot %d", idx);
         }
@@ -254,6 +259,7 @@ static int rodar(void) {
             DWORD pid = achar_pid("speed.exe");
             if (!pid) {
                 if (pendente) { aplicar_ajustes(&op); pendente = 0; }
+                if (g_sair_com_jogo) { anotar("jogo fechado, saindo"); return 0; }
                 if (t - t_status > 10) { printf("aguardando speed.exe...\n"); t_status = t; }
                 Sleep(1000); continue;
             }
@@ -369,6 +375,7 @@ int main(int argc, char **argv) {
         if (!strcmp(argv[i], "--test")) teste = 1;
         else if (!strcmp(argv[i], "--log")) log = 1;
         else if (!strcmp(argv[i], "--probe")) g_probe = 1;
+        else if (!strcmp(argv[i], "--sair-com-jogo")) g_sair_com_jogo = 1;
     }
     if (opcoes) return mostrar_opcoes();
     timeBeginPeriod(1);

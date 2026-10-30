@@ -4,3 +4,4 @@ dist/
 mw_rumble.cfg
 *.bak_vibracao
 __pycache__/
+build/
