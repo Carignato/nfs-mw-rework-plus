@@ -21,7 +21,7 @@ controller rumble (starts automatically with the game), an options panel in the 
 | Correções do Rework | cutscenes tocam, rastro do nitro volta, nitro volta a recarregar |
 | Seletor de dificuldade | ao criar uma **carreira nova** aparece a tela **Fácil / Médio / Difícil** (Médio = +30%, Difícil = +70% de habilidade dos oponentes e chefes). Vale depois de reiniciar o jogo |
 | Opcional: recarga do nitro 40% mais lenta | deixa a recarga do nitro mais demorada |
-| Opcional: limites de infração | multas por velocidade/direção imprudente passam a acontecer em velocidades mais baixas |
+| Limites de infração (corrige bug do Rework) | o Rework original vem com limites **absurdamente altos** (500 / 580,5 / 589,4 m/s ≈ 1.800+ km/h), impossíveis de atingir, então as infrações de velocidade e direção imprudente **nunca contavam** e não dava para bater o limite de infração do Big Lou. Esta opção coloca valores alcançáveis (40 / 52 / 65 m/s ≈ 144 / 187 / 234 km/h). Detalhes em [`docs/ajustes-rework.md`](docs/ajustes-rework.md) |
 
 O instalador **não distribui arquivos do jogo**: tudo é gerado a partir dos arquivos que você já tem, e cada arquivo alterado ganha um backup (`*.bak_vibracao`). Para desfazer, execute o instalador de novo e clique em **Desinstalar**.
 
@@ -30,6 +30,8 @@ O instalador **não distribui arquivos do jogo**: tudo é gerado a partir dos ar
 1. Download `NFSMW_Rework_Plus_Setup.exe` from [**Releases**](../../releases).
 2. **Close the game**, run the installer, click **Procurar...** (Browse) and pick the game folder (the one with `speed.exe`).
 3. Tick what you want and click **Instalar** (Install). Then just start the game.
+
+**Infraction limits (bug fix):** the original Rework ships absurdly high speeding limits (500 / 580.5 / 589.4 m/s, over 1,800 km/h) that can never be reached, so speeding and reckless-driving infractions never counted (and Big Lou's infraction limit could not be hit). The option sets reachable values (40 / 52 / 65 m/s ≈ 144 / 187 / 234 km/h; game defaults are 67 / 80.5 / 89.4).
 
 The installer is in Portuguese. It does not ship any game files: everything is generated from your own files, each changed file gets a `*.bak_vibracao` backup, and **Desinstalar** (Uninstall) restores them.
 

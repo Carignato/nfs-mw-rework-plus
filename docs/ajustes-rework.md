@@ -58,6 +58,24 @@ Ida e volta verificada: aplicar e desfazer devolve o `attributes.bin` **idêntic
 
 ---
 
+## 4) Limites de infração que nunca contavam
+
+**Causa.** O `SCRIPTS\NFSMWExtraOptionsSettings.ini` que acompanha o Rework vem com limites de velocidade de infração
+**absurdamente altos**, em m/s: `SpeedingLimit = 500`, `ExcessiveSpeedingLimit = 580.5`, `RecklessDrivingLimit = 589.4`
+(≈ 1.800 a 2.100 km/h). Nenhum carro chega nisso, então as infrações de velocidade e de direção imprudente **nunca eram
+registradas**, e o limite de infração do Big Lou não tinha como ser atingido. É um bug do mod original, não uma escolha do jogo.
+
+| Chave (em m/s) | Rework | Padrão do jogo | Esta correção |
+|---|---|---|---|
+| `SpeedingLimit` | 500 | 67.0 (≈ 241 km/h) | **40.0** (≈ 144 km/h) |
+| `ExcessiveSpeedingLimit` | 580.5 | 80.5 (≈ 290 km/h) | **52.0** (≈ 187 km/h) |
+| `RecklessDrivingLimit` | 589.4 | 89.4 (≈ 322 km/h) | **65.0** (≈ 234 km/h) |
+
+Os valores escolhidos ficam abaixo do padrão do jogo porque o padrão exige velocidades altas demais para o dia a dia; para o
+padrão do jogo, use 67.0 / 80.5 / 89.4 no `.ini`. O instalador guarda o `.ini` original em `*.bak_vibracao`.
+
+---
+
 ## Como aplicar
 
 **Com a ferramenta** (`ajustes_rework.exe`, no zip do Release):
