@@ -20,9 +20,12 @@ int ajustes_main(int argc, char **argv);
 #define TAM_SPEED_EXE 6049792u
 #define DIF_TAM_BIN 2294432u          /* tamanho do GLOBAL/gameplay.bin do Rework v2.0 */
 
-enum { ID_PASTA = 100, ID_PROCURAR, ID_RUMBLE, ID_AUTO, ID_FIX, ID_DIF, ID_REC40, ID_INFRA, ID_INSTALAR, ID_DESINST, ID_LOG };
+enum { ID_PASTA = 100, ID_PROCURAR, ID_RUMBLE, ID_FIX, ID_DIF, ID_REC40, ID_INFRA, ID_INSTALAR, ID_DESINST, ID_LOG };
 
 static HWND g_wnd, g_log;
+static HICON g_icone;    /* icone do instalador (resource 1), mostrado no topo da janela */
+static HFONT g_fonte, g_fonte_pequena;
+#define ALTURA_TOPO 128  /* espaco do cabecalho (icone + "by carignato"); o resto da janela desce esse tanto */
 static int g_teste;      /* --teste "pasta": instala (e desinstala) sem janela, para testes automaticos em pastas falsas */
 
 /* ------------------------------- log na janela ------------------------------- */
@@ -162,14 +165,14 @@ static void fazer_instalar(void) {
         char asi[MAX_PATH], ini[MAX_PATH];
         juntar(asi, sizeof asi, pasta, "scripts\\NFSMWRumbleLauncher.asi");
         juntar(ini, sizeof ini, pasta, "scripts\\NFSMWRumble.ini");
-        if (marcado(ID_AUTO)) {
+        {   /* a vibracao sempre inicia sozinha com o jogo (e fecha junto) */
             char exe_barra[MAX_PATH], txt[MAX_PATH + 32];
             snprintf(exe_barra, sizeof exe_barra, "%s", p); for (char *c = exe_barra; *c; c++) if (*c == '\\') *c = '/';
             int n = snprintf(txt, sizeof txt, "[rumble]\r\nexe=%s\r\n", exe_barra);
             if (escrever_blob(asi, BLOB_LAUNCHER, BLOB_LAUNCHER_N) && gravar_arquivo(ini, txt, (size_t)n))
                 dizer("  a vibracao agora inicia sozinha com o jogo (e fecha junto).");
             else dizer("  falha ao instalar o iniciador automatico");
-        } else { apagar(asi); apagar(ini); dizer("  iniciador automatico desligado: abra o scripts\\NFSMWRumble\\mw_rumble.exe antes de jogar."); }
+        }
     }
     if (marcado(ID_FIX)) {
         dizer("\n[Correcoes do Rework]");
@@ -180,7 +183,7 @@ static void fazer_instalar(void) {
         dizer("\n[Recarga do nitro 40%% mais lenta]");
         juntar(p, sizeof p, pasta, "GLOBAL\\attributes.bin"); recarga_lenta(p);
     }
-    if (marcado(ID_INFRA)) {
+    {   /* sempre aplicado: corrige o bug do Rework (limites de infracao impossiveis de atingir) */
         dizer("\n[Limites de infracao de velocidade]");
         juntar(p, sizeof p, pasta, "scripts\\NFSMWExtraOptionsSettings.ini");
         if (arquivo_existe(p)) {
@@ -236,10 +239,18 @@ static void pasta_inicial(void) {
     if (!p[0]) { char d[MAX_PATH], e[MAX_PATH]; dir_do_programa(d, sizeof d); juntar(e, sizeof e, d, "speed.exe"); if (arquivo_existe(e)) snprintf(p, sizeof p, "%s", d); }
     SetDlgItemTextA(g_wnd, ID_PASTA, p);
 }
+static void desenhar_topo(HDC dc) {
+    if (g_icone) DrawIconEx(dc, (590 - 96) / 2, 8, g_icone, 96, 96, 0, NULL, DI_NORMAL);
+    RECT r = {0, 106, 590, 122};
+    HGDIOBJ antes = SelectObject(dc, g_fonte_pequena);
+    SetBkMode(dc, TRANSPARENT); SetTextColor(dc, RGB(100, 100, 100));
+    DrawTextA(dc, "by carignato", -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    SelectObject(dc, antes);
+}
 static void utf8_w(const char *s, wchar_t *o, int cap) { if (!MultiByteToWideChar(CP_UTF8, 0, s, -1, o, cap)) o[0] = 0; }
 static HWND ctl(const char *cls, const char *txt, DWORD estilo, int x, int y, int w, int h, int id) {
     wchar_t c[32], t[256]; utf8_w(cls, c, 32); utf8_w(txt, t, 256);
-    return CreateWindowExW(cls[0] == 'E' ? WS_EX_CLIENTEDGE : 0, c, t, WS_CHILD | WS_VISIBLE | estilo, x, y, w, h, g_wnd, (HMENU)(INT_PTR)id, GetModuleHandleA(NULL), NULL);
+    return CreateWindowExW(cls[0] == 'E' ? WS_EX_CLIENTEDGE : 0, c, t, WS_CHILD | WS_VISIBLE | estilo, x, y + ALTURA_TOPO, w, h, g_wnd, (HMENU)(INT_PTR)id, GetModuleHandleA(NULL), NULL);
 }
 static BOOL CALLBACK por_fonte(HWND h, LPARAM f) { SendMessageA(h, WM_SETFONT, (WPARAM)f, TRUE); return TRUE; }
 
@@ -251,19 +262,20 @@ static LRESULT CALLBACK proc(HWND h, UINT m, WPARAM w, LPARAM l) {
         ctl("EDIT", "", ES_AUTOHSCROLL | WS_TABSTOP, 16, 34, 440, 24, ID_PASTA);
         ctl("BUTTON", "Procurar...", BS_PUSHBUTTON | WS_TABSTOP, 466, 33, 106, 26, ID_PROCURAR);
         ctl("STATIC", "O que instalar:", 0, 16, 72, 300, 20, 0);
-        ctl("BUTTON", "Vibração no controle + painel de opções no menu (Home)", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 94, 540, 22, ID_RUMBLE);
-        ctl("BUTTON", "Iniciar a vibração sozinha junto com o jogo", BS_AUTOCHECKBOX | WS_TABSTOP, 48, 118, 500, 22, ID_AUTO);
-        ctl("BUTTON", "Correções do Rework: cutscenes, rastro e recarga do nitro", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 144, 540, 22, ID_FIX);
-        ctl("BUTTON", "Seletor de dificuldade ao criar uma carreira (Fácil / Médio / Difícil)", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 168, 548, 22, ID_DIF);
-        ctl("BUTTON", "Opcional: recarga do nitro 40% mais lenta", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 192, 540, 22, ID_REC40);
-        ctl("BUTTON", "Opcional: limites de infração de velocidade mais baixos", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 216, 540, 22, ID_INFRA);
-        ctl("BUTTON", "Instalar", BS_DEFPUSHBUTTON | WS_TABSTOP, 16, 250, 130, 32, ID_INSTALAR);
-        ctl("BUTTON", "Desinstalar", BS_PUSHBUTTON | WS_TABSTOP, 156, 250, 130, 32, ID_DESINST);
-        g_log = ctl("EDIT", "", ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL, 16, 296, 556, 214, ID_LOG);
-        CheckDlgButton(h, ID_RUMBLE, BST_CHECKED); CheckDlgButton(h, ID_AUTO, BST_CHECKED);
+        ctl("BUTTON", "Vibração no controle (abre sozinha) + painel de opções no menu Home", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 94, 548, 22, ID_RUMBLE);
+        ctl("BUTTON", "Correções do Rework: cutscenes, rastro e recarga do nitro", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 120, 540, 22, ID_FIX);
+        ctl("BUTTON", "Seletor de dificuldade ao criar uma carreira (Fácil / Médio / Difícil)", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 144, 548, 22, ID_DIF);
+        ctl("BUTTON", "Opcional: recarga do nitro 40% mais lenta", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 168, 540, 22, ID_REC40);
+        ctl("BUTTON", "Correção do bug do Rework: limites de infração de velocidade (obrigatória)", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 192, 548, 22, ID_INFRA);
+        ctl("BUTTON", "Instalar", BS_DEFPUSHBUTTON | WS_TABSTOP, 16, 226, 130, 32, ID_INSTALAR);
+        ctl("BUTTON", "Desinstalar", BS_PUSHBUTTON | WS_TABSTOP, 156, 226, 130, 32, ID_DESINST);
+        g_log = ctl("EDIT", "", ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL, 16, 272, 556, 214, ID_LOG);
+        CheckDlgButton(h, ID_RUMBLE, BST_CHECKED); CheckDlgButton(h, ID_INFRA, BST_CHECKED);
         CheckDlgButton(h, ID_FIX, BST_CHECKED); CheckDlgButton(h, ID_DIF, BST_CHECKED);
-        HFONT f = CreateFontA(-15, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
-        EnumChildWindows(h, por_fonte, (LPARAM)f);
+        g_icone = (HICON)LoadImageA(GetModuleHandleA(NULL), MAKEINTRESOURCEA(1), IMAGE_ICON, 96, 96, 0);
+        g_fonte_pequena = CreateFontA(-12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
+        g_fonte = CreateFontA(-15, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
+        EnumChildWindows(h, por_fonte, (LPARAM)g_fonte);
         pasta_inicial();
         dizer("Feche o jogo antes de instalar. Cada arquivo alterado ganha um backup (*.bak_vibracao).");
         return 0;
@@ -273,9 +285,15 @@ static LRESULT CALLBACK proc(HWND h, UINT m, WPARAM w, LPARAM l) {
         case ID_PROCURAR: procurar(); break;
         case ID_INSTALAR: fazer_instalar(); break;
         case ID_DESINST: fazer_desinstalar(); break;
-        case ID_RUMBLE: EnableWindow(GetDlgItem(h, ID_AUTO), marcado(ID_RUMBLE)); break;
+        case ID_INFRA: CheckDlgButton(h, ID_INFRA, BST_CHECKED); break;   /* e correcao de bug: nao da para desmarcar */
         }
         return 0;
+    case WM_PAINT: {
+        PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps);
+        desenhar_topo(dc);
+        EndPaint(h, &ps);
+        return 0;
+    }
     case WM_DESTROY: PostQuitMessage(0); return 0;
     }
     return DefWindowProcA(h, m, w, l);
@@ -287,9 +305,10 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
     INITCOMMONCONTROLSEX ic = {sizeof ic, ICC_STANDARD_CLASSES}; InitCommonControlsEx(&ic);
     WNDCLASSA wc; memset(&wc, 0, sizeof wc);
     wc.lpfnWndProc = proc; wc.hInstance = inst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hIcon = LoadIconA(inst, MAKEINTRESOURCEA(1));
     wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "NFSMWPlusSetup";
     RegisterClassA(&wc);
-    RECT r = {0, 0, 590, 526}; AdjustWindowRect(&r, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, FALSE);
+    RECT r = {0, 0, 590, 502 + ALTURA_TOPO}; AdjustWindowRect(&r, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, FALSE);
     HWND w = CreateWindowExA(0, wc.lpszClassName, "NFS Most Wanted Rework Plus - Instalador", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
                              CW_USEDEFAULT, CW_USEDEFAULT, r.right - r.left, r.bottom - r.top, NULL, NULL, inst, NULL);
     if (strstr(cmd, "--teste")) {

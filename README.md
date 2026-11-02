@@ -18,7 +18,7 @@
 - **Cutscenes puladas** — passam a tocar normalmente.
 - **Rastro do nitro sumido** — o rastro volta.
 - **Nitro que não recarregava** — volta a recarregar, com o mesmo tempo de recarga do jogo original.
-- **Infrações de velocidade que nunca contavam** — o Rework vinha com limites de velocidade absurdamente altos (acima de 1.800 km/h), impossíveis de atingir. Por isso nenhuma infração de velocidade ou de direção imprudente era registrada, e não dava para bater o limite de infração do Big Lou. O instalador coloca limites possíveis de atingir.
+- **Infrações de velocidade que nunca contavam** — o Rework vinha com limites de velocidade absurdamente altos (acima de 1.800 km/h), impossíveis de atingir. Por isso nenhuma infração de velocidade ou de direção imprudente era registrada, e não dava para bater o limite de infração do Big Lou. O instalador coloca limites possíveis de atingir. Essa correção vem sempre marcada e não dá para desmarcar, porque é um bug.
 
 ## Como instalar
 
@@ -37,7 +37,7 @@ Abra o instalador de novo, escolha a pasta do jogo e clique em **Desinstalar**. 
 - Controle Xbox funciona direto. Controle PlayStation precisa do [DS4Windows](https://github.com/Ryochan7/DS4Windows).
 - O painel do menu Home precisa do ReShade 4.9.1 instalado no jogo. Sem ele, a vibração funciona do mesmo jeito.
 - Só para jogo offline. O instalador está em português.
-- O instalador não inclui arquivos do jogo: ele usa os que você já tem.
+- O instalador não inclui arquivos do jogo: ele usa os que você já tem. A única coisa do jogo que vem nele é o ícone do Most Wanted, mostrado na janela.
 
 ---
 
@@ -53,7 +53,7 @@ Abra o instalador de novo, escolha a pasta do jogo e clique em **Desinstalar**. 
 - **Skipped cutscenes** — they play normally.
 - **Missing nitro trail** — the trail is back.
 - **Nitro that never recharged** — it recharges again, with the same recharge time as the original game.
-- **Speeding infractions that never counted** — Rework shipped with absurdly high speed limits (over 1,800 km/h), impossible to reach, so no speeding or reckless-driving infraction was ever recorded and Big Lou's infraction limit could not be hit. The installer sets limits you can actually reach.
+- **Speeding infractions that never counted** — Rework shipped with absurdly high speed limits (over 1,800 km/h), impossible to reach, so no speeding or reckless-driving infraction was ever recorded and Big Lou's infraction limit could not be hit. The installer sets limits you can actually reach. This fix is always on and cannot be unticked, because it is a bug.
 
 ## Install
 
@@ -72,7 +72,7 @@ Open the installer again, pick the game folder and click **Desinstalar** (Uninst
 - Xbox controllers work directly. PlayStation controllers need [DS4Windows](https://github.com/Ryochan7/DS4Windows).
 - The Home menu panel needs ReShade 4.9.1 installed in the game. Without it, rumble works the same.
 - Offline play only. The installer is in Portuguese.
-- The installer ships no game files: it uses the ones you already have.
+- The installer ships no game files: it uses the ones you already have. The only thing from the game inside it is the Most Wanted icon shown in its window.
 
 ---
 
