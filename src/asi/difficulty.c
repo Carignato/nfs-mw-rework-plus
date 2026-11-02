@@ -108,9 +108,10 @@ static void show_selector(void* t) {
     ((fn_dlg)DLG_YESNO)(t, LBL_TITLE, TYPE_DIFF);          // monta titulo + 2 botoes
     DWORD pkg = *(DWORD*)((BYTE*)t + 0x10);
     ((fn_btn)DLG_BUTTON)(t, 2, 1, 0);                      // liga o 3o botao
-    ((fn_settext)SET_TEXT)(pkg, OBJ_TXT0, LBL_EASY);
+    // na tela o botao 3 fica em cima e o botao 1 embaixo: assim a lista aparece Facil, Medio, Dificil
+    ((fn_settext)SET_TEXT)(pkg, OBJ_TXT2, LBL_EASY);
     ((fn_settext)SET_TEXT)(pkg, OBJ_TXT1, LBL_MEDIUM);
-    ((fn_settext)SET_TEXT)(pkg, OBJ_TXT2, LBL_HARD);
+    ((fn_settext)SET_TEXT)(pkg, OBJ_TXT0, LBL_HARD);
     ((fn_focus)SET_FOCUS)(pkg, 0xb8a7c6cd);                // foco em Medio
 }
 
@@ -121,7 +122,7 @@ static void __thiscall resp_hook(void* t, DWORD a1, DWORD msg, DWORD a3, DWORD a
         *FLAGS_PREV = TYPE_DIFF;
         *FLAGS = flags & 0xf0ffffff;
         ((fn_void)DLG_CLEAN)(t);
-        g_choice = id == 0xb8a7c6ce ? 2 : id == 0xb8a7c6cc ? 0 : 1;
+        g_choice = id == 0xb8a7c6ce ? 0 : id == 0xb8a7c6cc ? 2 : 1;   // botao 3 = Facil, botao 1 = Dificil
         logf_(g_choice == 2 ? "escolha: dificil" : g_choice == 1 ? "escolha: medio" : "escolha: facil");
         escolher(g_choice);
         ((fn_state)STATE_ORIG)(t, 3);
