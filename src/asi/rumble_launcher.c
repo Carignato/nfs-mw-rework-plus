@@ -16,9 +16,12 @@ static int ja_rodando(void) {
 }
 
 static DWORD WINAPI iniciar(LPVOID p) {
-    (void)p;
     char exe[MAX_PATH] = "", ini[MAX_PATH];
-    GetFullPathNameA("scripts/NFSMWRumble.ini", MAX_PATH, ini, NULL);
+    // a pasta atual do processo nao e a do jogo quando o .asi carrega: o .ini fica ao lado do proprio .asi
+    GetModuleFileNameA((HMODULE)p, ini, MAX_PATH);
+    char* s = ini + lstrlenA(ini);
+    while (s > ini && *s != 92 && *s != '/') s--;
+    lstrcpyA(s + 1, "NFSMWRumble.ini");
     GetPrivateProfileStringA("rumble", "exe", "", exe, MAX_PATH, ini);
     if (!exe[0] || GetFileAttributesA(exe) == INVALID_FILE_ATTRIBUTES || ja_rodando()) return 0;
     char dir[MAX_PATH], cmd[MAX_PATH + 64];
@@ -36,9 +39,9 @@ static DWORD WINAPI iniciar(LPVOID p) {
 }
 
 BOOL WINAPI DllMain(HINSTANCE h, DWORD why, LPVOID r) {
-    (void)h; (void)r;
+    (void)r;
     if (why == DLL_PROCESS_ATTACH) {
-        HANDLE t = CreateThread(NULL, 0, iniciar, NULL, 0, NULL);
+        HANDLE t = CreateThread(NULL, 0, iniciar, h, 0, NULL);
         if (t) CloseHandle(t);
     }
     return TRUE;

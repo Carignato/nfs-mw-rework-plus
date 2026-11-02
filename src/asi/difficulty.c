@@ -39,8 +39,15 @@ typedef void (__cdecl *fn_focus)(DWORD, DWORD);
 
 static int g_choice = -1; // 0 facil, 1 medio, 2 dificil
 
+static HINSTANCE g_mod;
+
 static void logf_(const char* s) {
-    HANDLE f = CreateFileA("scripts/NFSMWDifficulty.log", FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0, NULL);
+    char path[MAX_PATH];   // o log fica ao lado do .asi (a pasta atual do processo nao e a do jogo ao carregar)
+    GetModuleFileNameA(g_mod, path, MAX_PATH);
+    char* b = path + lstrlenA(path);
+    while (b > path && *b != 92 && *b != '/') b--;
+    lstrcpyA(b + 1, "NFSMWDifficulty.log");
+    HANDLE f = CreateFileA(path, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0, NULL);
     if (f == INVALID_HANDLE_VALUE) return;
     static const char crlf[2] = {13, 10};
     DWORD n; WriteFile(f, s, lstrlenA(s), &n, NULL); WriteFile(f, crlf, 2, &n, NULL); CloseHandle(f);
@@ -153,6 +160,8 @@ static int congelar_adaptacao(void) {
 }
 
 BOOL WINAPI DllMain(HINSTANCE h, DWORD why, LPVOID r) {
+    (void)r;
+    g_mod = h;
     if (why == DLL_PROCESS_ATTACH) {
         int a = patch_call(0x5640FD, RESP_ORIG, resp_hook);   // despacho da resposta de dialogo
         int b = patch_call(0x563660, STATE_ORIG, state_hook); // aceitar o 2o aviso -> estado 3
