@@ -11,13 +11,13 @@
 - **Vibração no controle** — o controle vibra em batidas, pousos, nitro, derrapagens e mais. Abre sozinha com o jogo e fecha junto com ele.
 - **Painel de opções no menu Home** — liga e desliga a vibração e os ajustes sem sair do jogo.
 - **Escolha de dificuldade** — ao criar uma **carreira nova** aparece a tela **Fácil / Médio / Difícil**. A escolha vale para aquela carreira inteira, e o jogo deixa de mudar a dificuldade sozinho. Fácil: os adversários não "voltam" para cima de você e ficam um pouco mais lentos. Médio: meio termo. Difícil: o máximo.
-- **Nitro mais lento para recarregar** (opcional) — a recarga do nitro fica 40% mais demorada.
+- **Nitro mais lento para recarregar** (opcional) — a recarga fica 40% mais lenta do que a do jogo original. Se você prefere o tempo original, desmarque essa opção.
 
 ## Bugs do Rework que ele corrige
 
 - **Cutscenes puladas** — passam a tocar normalmente.
 - **Rastro do nitro sumido** — o rastro volta.
-- **Nitro que não recarregava** — volta a recarregar.
+- **Nitro que não recarregava** — volta a recarregar, com o mesmo tempo de recarga do jogo original.
 - **Infrações de velocidade que nunca contavam** — o Rework vinha com limites de velocidade absurdamente altos (acima de 1.800 km/h), impossíveis de atingir. Por isso nenhuma infração de velocidade ou de direção imprudente era registrada, e não dava para bater o limite de infração do Big Lou. O instalador coloca limites possíveis de atingir.
 
 ## Como instalar
@@ -46,13 +46,13 @@ Abra o instalador de novo, escolha a pasta do jogo e clique em **Desinstalar**. 
 - **Controller rumble** — your controller vibrates on hits, landings, nitro, drifts and more. It starts with the game and closes with it.
 - **Options panel in the Home menu** — turn rumble and the tweaks on and off without leaving the game.
 - **Difficulty choice** — when you start a **new career** you pick **Easy / Medium / Hard**. The choice applies to that whole career, and the game stops changing the difficulty on its own. Easy: opponents stop catching up to you and are a bit slower. Medium: in between. Hard: the maximum.
-- **Slower nitro recharge** (optional) — nitro recharge takes 40% longer.
+- **Slower nitro recharge** (optional) — recharge is 40% slower than in the original game. If you prefer the original timing, leave this option unticked.
 
 ## Rework bugs it fixes
 
 - **Skipped cutscenes** — they play normally.
 - **Missing nitro trail** — the trail is back.
-- **Nitro that never recharged** — it recharges again.
+- **Nitro that never recharged** — it recharges again, with the same recharge time as the original game.
 - **Speeding infractions that never counted** — Rework shipped with absurdly high speed limits (over 1,800 km/h), impossible to reach, so no speeding or reckless-driving infraction was ever recorded and Big Lou's infraction limit could not be hit. The installer sets limits you can actually reach.
 
 ## Install
