@@ -1,46 +1,79 @@
 # NFS Most Wanted Rework Plus
 
-**PT-BR:** melhorias para o *Need for Speed: Most Wanted* (2005) no PC, para o mod **Rework**:
-vibração no controle (inicia sozinha com o jogo), painel de opções no menu Home, seletor de dificuldade ao criar a carreira e correções (nitro que não recarrega, cutscenes puladas, rastro do nitro).
+**PT-BR:** melhorias para o *Need for Speed: Most Wanted* (2005) no PC, para o mod **Rework**: vibração no controle, painel de opções no menu Home, escolha de dificuldade ao criar a carreira e correção de bugs do Rework.
 
-**EN:** improvements for *Need for Speed: Most Wanted* (2005) on PC, for the **Rework** mod:
-controller rumble (starts automatically with the game), an options panel in the Home menu, a difficulty selector when creating a career, and fixes (nitro not recharging, skipped cutscenes, missing nitro trail).
+**EN:** improvements for *Need for Speed: Most Wanted* (2005) on PC, for the **Rework** mod: controller rumble, an options panel in the Home menu, a difficulty choice when you start a career, and fixes for Rework bugs.
 
 ---
 
-## Instalação (PT-BR)
+## O que o mod traz
+
+- **Vibração no controle** — o controle vibra em batidas, pousos, nitro, derrapagens e mais. Abre sozinha com o jogo e fecha junto com ele.
+- **Painel de opções no menu Home** — liga e desliga a vibração e os ajustes sem sair do jogo.
+- **Escolha de dificuldade** — ao criar uma **carreira nova** aparece a tela **Fácil / Médio / Difícil**. A escolha vale para aquela carreira inteira, e o jogo deixa de mudar a dificuldade sozinho. Fácil: os adversários não "voltam" para cima de você e ficam um pouco mais lentos. Médio: meio termo. Difícil: o máximo.
+- **Nitro mais lento para recarregar** (opcional) — a recarga do nitro fica 40% mais demorada.
+
+## Bugs do Rework que ele corrige
+
+- **Cutscenes puladas** — passam a tocar normalmente.
+- **Rastro do nitro sumido** — o rastro volta.
+- **Nitro que não recarregava** — volta a recarregar.
+- **Infrações de velocidade que nunca contavam** — o Rework vinha com limites de velocidade absurdamente altos (acima de 1.800 km/h), impossíveis de atingir. Por isso nenhuma infração de velocidade ou de direção imprudente era registrada, e não dava para bater o limite de infração do Big Lou. O instalador coloca limites possíveis de atingir.
+
+## Como instalar
 
 1. Baixe o `NFSMW_Rework_Plus_Setup.exe` em [**Releases**](../../releases).
-2. **Feche o jogo** e execute o instalador. Clique em **Procurar...** e escolha a pasta do jogo (a que tem o `speed.exe`).
-3. Marque o que quer instalar e clique em **Instalar**. Pronto: abra o jogo normalmente.
+2. **Feche o jogo** e abra o instalador. Clique em **Procurar...** e escolha a pasta do jogo (a que tem o `speed.exe`).
+3. Marque o que quer instalar e clique em **Instalar**.
+4. Abra o jogo normalmente.
 
-| Opção | O que faz |
-|---|---|
-| Vibração + painel | instala o `mw_rumble` (vibra em batidas, pousos, nitro, derrapagem...) e o painel do menu Home (ReShade 4.9.1) |
-| Iniciar sozinha | a vibração abre escondida com o jogo e fecha junto — sem janela de cmd |
-| Correções do Rework | cutscenes tocam, rastro do nitro volta, nitro volta a recarregar |
-| Seletor de dificuldade | ao criar uma **carreira nova** aparece a tela **Fácil / Médio / Difícil** (Médio = +30%, Difícil = +70% de habilidade dos oponentes e chefes). Vale depois de reiniciar o jogo |
-| Opcional: recarga do nitro 40% mais lenta | deixa a recarga do nitro mais demorada |
-| Limites de infração (corrige bug do Rework) | o Rework original vem com limites **absurdamente altos** (500 / 580,5 / 589,4 m/s ≈ 1.800+ km/h), impossíveis de atingir, então as infrações de velocidade e direção imprudente **nunca contavam** e não dava para bater o limite de infração do Big Lou. Esta opção coloca valores alcançáveis (40 / 52 / 65 m/s ≈ 144 / 187 / 234 km/h). Detalhes em [`docs/ajustes-rework.md`](docs/ajustes-rework.md) |
+## Como desinstalar
 
-O instalador **não distribui arquivos do jogo**: tudo é gerado a partir dos arquivos que você já tem, e cada arquivo alterado ganha um backup (`*.bak_vibracao`). Para desfazer, execute o instalador de novo e clique em **Desinstalar**.
+Abra o instalador de novo, escolha a pasta do jogo e clique em **Desinstalar**. Os arquivos do jogo voltam ao que eram antes.
 
-## Install (English)
+## Requisitos e observações
 
-1. Download `NFSMW_Rework_Plus_Setup.exe` from [**Releases**](../../releases).
-2. **Close the game**, run the installer, click **Procurar...** (Browse) and pick the game folder (the one with `speed.exe`).
-3. Tick what you want and click **Instalar** (Install). Then just start the game.
-
-**Infraction limits (bug fix):** the original Rework ships absurdly high speeding limits (500 / 580.5 / 589.4 m/s, over 1,800 km/h) that can never be reached, so speeding and reckless-driving infractions never counted (and Big Lou's infraction limit could not be hit). The option sets reachable values (40 / 52 / 65 m/s ≈ 144 / 187 / 234 km/h; game defaults are 67 / 80.5 / 89.4).
-
-The installer is in Portuguese. It does not ship any game files: everything is generated from your own files, each changed file gets a `*.bak_vibracao` backup, and **Desinstalar** (Uninstall) restores them.
+- Feito para o **Rework v2.0**. Em outra versão, o instalador pula o que não reconhece e não altera nada.
+- Controle Xbox funciona direto. Controle PlayStation precisa do [DS4Windows](https://github.com/Ryochan7/DS4Windows).
+- O painel do menu Home precisa do ReShade 4.9.1 instalado no jogo. Sem ele, a vibração funciona do mesmo jeito.
+- Só para jogo offline. O instalador está em português.
+- O instalador não inclui arquivos do jogo: ele usa os que você já tem.
 
 ---
 
-## Informações / Info
+## What it adds
 
-- **PT-BR:** controle Xbox funciona direto; PlayStation via [DS4Windows](https://github.com/Ryochan7/DS4Windows). O painel precisa do ReShade 4.9.1; sem ele a vibração funciona igual. O seletor de dificuldade e as correções valem para o **Rework v2.0** (`speed.exe` 6.049.792 bytes, `attributes.bin` 688.434 bytes); em outras versões o instalador pula o que não reconhece, sem alterar nada. Testado no Windows 11, DualSense. Só jogo offline.
-- **EN:** Xbox controllers work directly; PlayStation ones through [DS4Windows](https://github.com/Ryochan7/DS4Windows). The panel needs ReShade 4.9.1; rumble works without it. The difficulty selector and fixes target **Rework v2.0**; on other versions the installer skips what it does not recognise. Tested on Windows 11, DualSense. Offline play only.
-- Como funciona a dificuldade / how difficulty works: [`docs/dificuldade.md`](docs/dificuldade.md)
-- Detalhes dos ajustes / fix details: [`docs/ajustes-rework.md`](docs/ajustes-rework.md)
-- Compilar / build: `construir.bat` (gcc) — Licença / License: [MIT](LICENSE) · Créditos / Credits: [NFSPluginSDK](https://github.com/berkayylmao/NFSPluginSDK), [ReShade](https://reshade.me)
+- **Controller rumble** — your controller vibrates on hits, landings, nitro, drifts and more. It starts with the game and closes with it.
+- **Options panel in the Home menu** — turn rumble and the tweaks on and off without leaving the game.
+- **Difficulty choice** — when you start a **new career** you pick **Easy / Medium / Hard**. The choice applies to that whole career, and the game stops changing the difficulty on its own. Easy: opponents stop catching up to you and are a bit slower. Medium: in between. Hard: the maximum.
+- **Slower nitro recharge** (optional) — nitro recharge takes 40% longer.
+
+## Rework bugs it fixes
+
+- **Skipped cutscenes** — they play normally.
+- **Missing nitro trail** — the trail is back.
+- **Nitro that never recharged** — it recharges again.
+- **Speeding infractions that never counted** — Rework shipped with absurdly high speed limits (over 1,800 km/h), impossible to reach, so no speeding or reckless-driving infraction was ever recorded and Big Lou's infraction limit could not be hit. The installer sets limits you can actually reach.
+
+## Install
+
+1. Download `NFSMW_Rework_Plus_Setup.exe` from [**Releases**](../../releases).
+2. **Close the game**, open the installer, click **Procurar...** (Browse) and pick the game folder (the one with `speed.exe`).
+3. Tick what you want and click **Instalar** (Install).
+4. Start the game normally.
+
+## Uninstall
+
+Open the installer again, pick the game folder and click **Desinstalar** (Uninstall). Your game files go back to how they were.
+
+## Requirements and notes
+
+- Made for **Rework v2.0**. On other versions the installer skips what it does not recognise and changes nothing.
+- Xbox controllers work directly. PlayStation controllers need [DS4Windows](https://github.com/Ryochan7/DS4Windows).
+- The Home menu panel needs ReShade 4.9.1 installed in the game. Without it, rumble works the same.
+- Offline play only. The installer is in Portuguese.
+- The installer ships no game files: it uses the ones you already have.
+
+---
+
+Licença / License: [MIT](LICENSE) · Créditos / Credits: [NFSPluginSDK](https://github.com/berkayylmao/NFSPluginSDK), [ReShade](https://reshade.me)

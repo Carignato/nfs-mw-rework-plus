@@ -3,7 +3,7 @@
  * Reaproveita o instalador do painel (instalar.c) e os ajustes do Rework (ajustes_rework.c), compilados com
  * main renomeado (instalar_main / ajustes_main), e acrescenta:
  *   - copia do mw_rumble.exe + launcher .asi (inicia a vibracao sozinha com o jogo);
- *   - seletor de dificuldade ao criar carreira (.asi + tres versoes do gameplay.bin/.lzc geradas do arquivo do usuario);
+ *   - seletor de dificuldade ao criar carreira (so o .asi; o nivel fica no perfil da carreira);
  *   - recarga do nitro 40% mais lenta e limites de infracao (opcionais).
  * Nenhum arquivo do jogo e distribuido: tudo e gerado/alterado a partir do que o usuario ja tem, com backup (*.bak_vibracao).
  */
@@ -11,15 +11,14 @@
 #include "comum.h"
 #include <shlobj.h>
 #include <commctrl.h>
-#include <math.h>
 #include <stdarg.h>
 #include "blobs.h"
-#include "diftab.h"
 
 int instalar_main(int argc, char **argv);
 int ajustes_main(int argc, char **argv);
 
 #define TAM_SPEED_EXE 6049792u
+#define DIF_TAM_BIN 2294432u          /* tamanho do GLOBAL/gameplay.bin do Rework v2.0 */
 
 enum { ID_PASTA = 100, ID_PROCURAR, ID_RUMBLE, ID_AUTO, ID_FIX, ID_DIF, ID_REC40, ID_INFRA, ID_INSTALAR, ID_DESINST, ID_LOG };
 
@@ -103,58 +102,31 @@ static void recarga_lenta(const char *attr) {
 }
 
 /* ------------------------------- dificuldade ------------------------------- */
-static int dif_confere(const unsigned char *bin) {
-    for (int i = 0; i < DIF_N; i++) {
-        uint32_t off = DIF_TAB[i][0], v; uint32_t chave = DIF_TAB[i][1] ? 0xB1ECE070u : 0x3B798AA2u, k;
-        memcpy(&k, bin + off - 4, 4); memcpy(&v, bin + off, 4);
-        if (k != chave || v != DIF_TAB[i][2]) return 0;
-    }
-    return 1;
-}
-static void dif_escalar(unsigned char *bin, double escala) {
-    for (int i = 0; i < DIF_N; i++) {
-        uint32_t off = DIF_TAB[i][0], bits = DIF_TAB[i][2];
-        if (DIF_TAB[i][1] == 0) { int32_t o = (int32_t)bits; int32_t n = (int32_t)floor((double)o * escala + 0.5); memcpy(bin + off, &n, 4); }
-        else { float o; memcpy(&o, &bits, 4); float n = (float)((double)o * escala); if (n > 1.0f) n = 1.0f; memcpy(bin + off, &n, 4); }
-    }
-}
-static void instalar_dificuldade(const char *pasta) {
-    char exe[MAX_PATH], gbin[MAX_PATH], glzc[MAX_PATH], vdir[MAX_PATH], asi[MAX_PATH], v[MAX_PATH];
-    juntar(exe, sizeof exe, pasta, "speed.exe");
+/* O seletor so precisa do .asi: ele grava o nivel no perfil da carreira. Versoes antigas (v1.1.0) trocavam o
+   gameplay.bin/.lzc; aqui o original volta para o lugar, se ainda estiver trocado. */
+static void dif_restaurar_gameplay(const char *pasta) {
+    char vdir[MAX_PATH], f1[MAX_PATH], f2[MAX_PATH], gbin[MAX_PATH], glzc[MAX_PATH];
+    juntar(vdir, sizeof vdir, pasta, "scripts\\NFSMWDifficulty");
     juntar(gbin, sizeof gbin, pasta, "GLOBAL\\gameplay.bin");
     juntar(glzc, sizeof glzc, pasta, "GLOBAL\\gameplay.lzc");
-    juntar(vdir, sizeof vdir, pasta, "scripts\\NFSMWDifficulty");
+    juntar(f1, sizeof f1, vdir, "gameplay_easy.bin"); juntar(f2, sizeof f2, vdir, "gameplay_easy.lzc");
+    if (!arquivo_existe(f1) || !arquivo_existe(f2)) return;            /* nada da versao antiga */
+    if (tamanho(f1) == (long)DIF_TAM_BIN && tamanho(f2) == (long)DIF_TAM_BIN + 16 && CopyFileA(f1, gbin, FALSE) && CopyFileA(f2, glzc, FALSE))
+        dizer("  gameplay.bin/.lzc originais de volta (a versao antiga do seletor os tinha alterado)");
+    static const char *velhos[] = {"gameplay_easy.bin", "gameplay_easy.lzc", "gameplay_medium.bin", "gameplay_medium.lzc", "gameplay_hard.bin", "gameplay_hard.lzc"};
+    for (size_t i = 0; i < sizeof velhos / sizeof *velhos; i++) { char v[MAX_PATH]; juntar(v, sizeof v, vdir, velhos[i]); apagar(v); }
+    RemoveDirectoryA(vdir);
+}
+static void instalar_dificuldade(const char *pasta) {
+    char exe[MAX_PATH], asi[MAX_PATH];
+    juntar(exe, sizeof exe, pasta, "speed.exe");
     juntar(asi, sizeof asi, pasta, "scripts\\NFSMWDifficulty.asi");
     if (tamanho(exe) != (long)TAM_SPEED_EXE) { dizer("  dificuldade: speed.exe de outra versao (esperado %u bytes) - nao instalada", TAM_SPEED_EXE); return; }
-    size_t n = 0, nl = 0;
-    unsigned char *bin = (unsigned char *)ler_arquivo(gbin, &n);
-    unsigned char *lzc = (unsigned char *)ler_arquivo(glzc, &nl);
-    int global_original = bin && n == DIF_TAM_BIN && dif_confere(bin) && lzc && nl == DIF_TAM_BIN + 16 && memcmp(lzc + 16, bin, n) == 0;
-    if (!global_original) {                                   /* reinstalacao: o original fica guardado como a versao "facil" */
-        free(bin); free(lzc);
-        char f1[MAX_PATH], f2[MAX_PATH];
-        juntar(f1, sizeof f1, vdir, "gameplay_easy.bin"); juntar(f2, sizeof f2, vdir, "gameplay_easy.lzc");
-        bin = (unsigned char *)ler_arquivo(f1, &n); lzc = (unsigned char *)ler_arquivo(f2, &nl);
-        if (!bin || n != DIF_TAM_BIN || !dif_confere(bin) || !lzc || nl != DIF_TAM_BIN + 16) {
-            dizer("  dificuldade: GLOBAL\\gameplay.bin/.lzc nao sao os do Rework v2.0 (ou ja foram alterados) - nao instalada");
-            free(bin); free(lzc); return;
-        }
-    } else { copiar_backup(gbin); copiar_backup(glzc); }
-    static const char *nome[3] = {"easy", "medium", "hard"};
-    static const double escala[3] = {1.0, 1.3, 1.7};
-    for (int i = 0; i < 3; i++) {
-        unsigned char *b = (unsigned char *)malloc(n); memcpy(b, bin, n); dif_escalar(b, escala[i]);
-        unsigned char *l = (unsigned char *)malloc(nl); memcpy(l, lzc, 16); memcpy(l + 16, b, n);
-        snprintf(v, sizeof v, "%s\\gameplay_%s.bin", vdir, nome[i]); escrever_blob(v, b, n);
-        snprintf(v, sizeof v, "%s\\gameplay_%s.lzc", vdir, nome[i]); escrever_blob(v, l, nl);
-        free(b); free(l);
-    }
-    if (global_original) { /* GLOBAL ja e a versao facil */ }
+    dif_restaurar_gameplay(pasta);
     if (escrever_blob(asi, BLOB_DIFASI, BLOB_DIFASI_N))
-        dizer("  seletor de dificuldade instalado. Ao criar uma carreira nova aparece a tela Facil / Medio / Dificil\n"
-              "  (Medio = +30%% e Dificil = +70%% de habilidade dos oponentes e chefes). A mudanca vale ao reiniciar o jogo.");
+        dizer("  seletor de dificuldade instalado. Ao criar uma carreira nova aparece a tela Facil / Medio / Dificil.\n"
+              "  O nivel fica gravado na carreira e o jogo deixa de ajustar a dificuldade sozinho.");
     else dizer("  falha ao gravar NFSMWDifficulty.asi");
-    free(bin); free(lzc);
 }
 
 /* ------------------------------- instalar / desinstalar ------------------------------- */
